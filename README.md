@@ -9,7 +9,7 @@ curl -fsSL https://deno.land/x/install/install.sh | sh
 brew install deno
 ```
 
-## Run
+## To Run
 
 deno run ...
 
@@ -20,6 +20,10 @@ The simplest way to use this plugin is to install the [TypeScript Deno Plugin VS
 - config : cmd+ctl+p : deno: initializing
   for workspace enable features like: syntax, lint...
 - debug : launch.json
+
+## To Test
+
+deno test --allow-net
 
 ## notes
 
