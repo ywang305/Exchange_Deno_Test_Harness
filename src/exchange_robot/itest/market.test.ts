@@ -1,5 +1,6 @@
 import {
   assertArrayIncludes,
+  assertEquals,
   assert,
 } from "https://deno.land/std/testing/asserts.ts";
 import { sleep } from "https://deno.land/x/sleep/mod.ts";
@@ -76,5 +77,40 @@ Deno.test(
       orderIds.some((id) => id === buyOrderId || id === sellOrderId),
       "no buyOrderId or sellOrderId exists in returned tradeOrderDetail's id "
     );
+  }
+);
+
+Deno.test(
+  "order buy/sell, pressure test with 1000 request for each buy / sell",
+  async () => {
+    const buyIds: Array<string> = [];
+    const sellIds: string[] = [];
+    const seqs = Array.from({ length: 1000 });
+    for await (const _ of seqs) {
+      const buyOrderId = await placeExchangeOrder(exBuyOrder);
+      const sellOrderId = await placeExchangeOrder(exSellOrder);
+      buyIds.push(buyOrderId);
+      sellIds.push(sellOrderId);
+    }
+
+    assertEquals(buyIds.length, 1000, "not generated 1000 buys");
+    assertEquals(sellIds.length, 1000, "not generated 1000 sells");
+
+    console.info("\n waiting for 60s to checkout... \n");
+
+    await sleep(60);
+
+    const tradeOrderDetailUrl =
+      baseUrl + `/trade_order_list/${symbol}/${testMemberId}`;
+
+    const resp = await fetch(tradeOrderDetailUrl);
+    const todList: Array<TradeOrderDetail> = await resp.json();
+    const todOrderIdSet = new Set(todList.map((tod) => tod.orderId));
+    seqs.forEach((_, i) => {
+      assert(
+        todOrderIdSet.has(buyIds[i]) || todOrderIdSet.has(sellIds[i]),
+        "tod ids should be exists in checkout"
+      );
+    });
   }
 );
