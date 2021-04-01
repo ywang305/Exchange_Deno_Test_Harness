@@ -23,7 +23,9 @@ The simplest way to use this plugin is to install the [TypeScript Deno Plugin VS
 
 ## To Test
 
-deno test --allow-net
+deno test -A
+
+deno test -A ./src/exchange_robot/itest/market.test.ts
 
 ## notes
 
