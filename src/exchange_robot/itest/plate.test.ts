@@ -14,7 +14,7 @@ import { makeExchangeOrder, placeExchangeOrder } from "./helper.ts";
 
 //  pressure testing
 
-const pressure = 100;
+const pressure = 30;
 const testMemberId = 600821;
 const symbol = "BTC-USDT";
 const baseUrl = HOST + ":" + PORT.MARKET + "/market";
@@ -30,13 +30,15 @@ Deno.test(
         ExchangeOrderType.LIMIT_PRICE,
         ExchangeOrderDirection.BUY,
         testMemberId,
-        [0.01, 10]
+        [0.01, 60],
+        [101, 300]
       );
       const exSellOrder = makeExchangeOrder(
         ExchangeOrderType.LIMIT_PRICE,
         ExchangeOrderDirection.SELL,
         testMemberId,
-        [30, 100]
+        [10, 100],
+        [101, 300]
       );
       const buyOrderId = await placeExchangeOrder(exBuyOrder);
       const sellOrderId = await placeExchangeOrder(exSellOrder);

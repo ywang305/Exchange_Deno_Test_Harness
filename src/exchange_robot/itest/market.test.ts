@@ -9,11 +9,10 @@ import ExchangeOrder from "../model/ExchangeOrder.ts";
 import { ExchangeOrderDirection } from "../model/ExchangeOrderDirection.ts";
 import { ExchangeOrderType } from "../model/ExchangeOrderType.ts";
 import TradeOrderDetail from "../model/TradeOrderDetail.ts";
-import { makeExchangeOrder, placeExchangeOrder } from "./helper.ts";
+import { makeExchangeOrder, placeExchangeOrder, symbol } from "./helper.ts";
 
 const baseUrl = HOST + ":" + PORT.MARKET + "/market";
 const testMemberId = 600821;
-const symbol = "BTC-USDT";
 
 Deno.test(
   "order buy/sell, then trade-order-detail gen from placed orders and trades",
@@ -23,12 +22,16 @@ Deno.test(
     const exBuyOrder = makeExchangeOrder(
       ExchangeOrderType.LIMIT_PRICE,
       ExchangeOrderDirection.BUY,
-      testMemberId
+      testMemberId,
+      [0.01, 60],
+      [101, 300]
     );
     const exSellOrder = makeExchangeOrder(
       ExchangeOrderType.LIMIT_PRICE,
       ExchangeOrderDirection.SELL,
-      testMemberId
+      testMemberId,
+      [10, 100],
+      [101, 300]
     );
     const buyOrderId = await placeExchangeOrder(exBuyOrder);
     const sellOrderId = await placeExchangeOrder(exSellOrder);

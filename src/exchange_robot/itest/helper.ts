@@ -4,7 +4,9 @@ import { ExchangeOrderDirection } from "../model/ExchangeOrderDirection.ts";
 import { ExchangeOrderType } from "../model/ExchangeOrderType.ts";
 import { ExchangePlatform } from "../model/ExchangePlatform.ts";
 
-const Random = Math.random;
+const coinSymbol = "GSC";
+const baseSymbol = "USDT";
+export const symbol = coinSymbol + "-" + baseSymbol;
 
 export function generateRandomNumber(min: number, max: number) {
   return Math.random() * (max - min) + min;
@@ -14,17 +16,18 @@ export const makeExchangeOrder = (
   type: ExchangeOrderType,
   direction: ExchangeOrderDirection,
   memberId: number,
-  priceRange: Array<number>
+  priceRange: Array<number>,
+  amountRange: Array<number>
 ) => {
   const exOrder: Partial<ExchangeOrder> = {
     memberId,
     type,
-    symbol: "BTC-USDT",
-    coinSymbol: "BTC",
-    baseSymbol: "USDT",
+    symbol,
+    coinSymbol,
+    baseSymbol,
     direction,
     price: generateRandomNumber(priceRange[0], priceRange[1]),
-    amount: generateRandomNumber(0.01, 9),
+    amount: generateRandomNumber(amountRange[0], amountRange[1]),
     exchangePlatform: ExchangePlatform.GOLDEN_SOURCE,
   };
 
