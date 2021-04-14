@@ -14,8 +14,8 @@ import { makeExchangeOrder, placeExchangeOrder } from "./helper.ts";
 
 //  pressure testing
 
-const pressure = 30;
-const testMemberId = 600821;
+const pressure = 5000;
+const testMemberId = 600844;
 const symbol = "BTC-USDT";
 const baseUrl = HOST + ":" + PORT.MARKET + "/market";
 
@@ -24,30 +24,31 @@ Deno.test(
   async () => {
     const buyIds: Array<string> = [];
     const sellIds: string[] = [];
-    const seqs = Array.from({ length: 1000 });
+    const seqs = Array.from({ length: pressure });
     for await (const _ of seqs) {
       const exBuyOrder = makeExchangeOrder(
         ExchangeOrderType.LIMIT_PRICE,
         ExchangeOrderDirection.BUY,
         testMemberId,
-        [0.01, 60],
+        [0.01, 10],
         [101, 300]
       );
       const exSellOrder = makeExchangeOrder(
         ExchangeOrderType.LIMIT_PRICE,
         ExchangeOrderDirection.SELL,
         testMemberId,
-        [10, 100],
+        [1, 20],
         [101, 300]
       );
       const buyOrderId = await placeExchangeOrder(exBuyOrder);
       const sellOrderId = await placeExchangeOrder(exSellOrder);
       buyIds.push(buyOrderId);
       sellIds.push(sellOrderId);
+      await sleep(5);
     }
 
-    assertEquals(buyIds.length, 1000, `not generated ${pressure} buys`);
-    assertEquals(sellIds.length, 1000, `not generated ${pressure} sells`);
+    assertEquals(buyIds.length, pressure, `not generated ${pressure} buys`);
+    assertEquals(sellIds.length, pressure, `not generated ${pressure} sells`);
 
     console.info("\n waiting for 60s to checkout... \n");
     await sleep(60);
